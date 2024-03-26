@@ -1,5 +1,15 @@
-function App() {
-  return <h2 className="text-3xl font-bold underline">Hello World!</h2>;
-}
+import Hero from "./components/Hero";
+import Highlights from "./components/Highlights";
+import Navbar from "./components/Navbar";
+
+const App = () => {
+  return (
+    <main className=" bg-black">
+      <Navbar></Navbar>
+      <Hero></Hero>
+      <Highlights></Highlights>
+    </main>
+  );
+};
 
 export default App;
