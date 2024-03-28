@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { hightlightsSlides } from "../constants";
 import { useState } from "react";
+import { useEffect } from "react";
 
 const VideoCarousel = () => {
   const videoRef = useRef([]);
@@ -15,11 +16,35 @@ const VideoCarousel = () => {
     isPlaying: false,
   });
 
+  const [loadedData, setLoadedData] = useState([]);
+
   const { isEnd, startPlay, videoId, isLastVideo, isPlaying } = video;
+
+  useEffect(() => {
+    if (loadedData.length > 3) {
+      if (!isPlaying) {
+        videoRef.current[videoId].pause();
+      } else {
+        startPlay && videoRef.current[videoId].play();
+      }
+    }
+  }, [startPlay, videoId, isPlaying, loadedData]);
+
+  useEffect(() => {
+    const currentProgress = 0;
+    let span = videoSpanRef.current;
+    if (span[videoId]) {
+      // animate the progress of the video
+      let anim = gsap.to(span[videoId], {
+        onUpdate: () => {},
+        onComplete: () => {},
+      });
+    }
+  }, [videoId, startPlay]);
 
   return (
     <>
-      <div className="flex items-center">
+      <div className=" flex items-center">
         {hightlightsSlides.map((list, i) => (
           <div key={list.id} id="slider" className="sm:pr-20 pr-10">
             <div className="video-carousel-container">
