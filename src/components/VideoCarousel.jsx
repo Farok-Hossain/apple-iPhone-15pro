@@ -2,13 +2,15 @@ import { useRef } from "react";
 import { hightlightsSlides } from "../constants";
 import { useState } from "react";
 import { useEffect } from "react";
+import { pauseImg, playImg, replayImg } from "../utils";
+import gasp from "gsap";
 
 const VideoCarousel = () => {
   const videoRef = useRef([]);
   const videoSpanRef = useRef([]);
   const videoDivRef = useRef([]);
 
-  const [video, setvideo] = useState({
+  const [video, setVideo] = useState({
     isEnd: false,
     startPlay: false,
     videoId: 0,
@@ -42,6 +44,26 @@ const VideoCarousel = () => {
     }
   }, [videoId, startPlay]);
 
+  const handleProcess = (type, i) => {
+    switch (type) {
+      case "video-end":
+        setVideo((pre) => ({ ...pre, isEnd: true, videId: i + 1 }));
+        break;
+      case "video-last":
+        setVideo((pre) => ({ ...pre, isLastVideo: true }));
+        break;
+      case "video-reset":
+        setVideo((pre) => ({ ...pre, isLastVideo: false, videoId: 0 }));
+        break;
+      case "play":
+        setVideo((pre) => ({ ...pre, isPlaying: !pre.isPlaying }));
+        break;
+
+      default:
+        return video;
+    }
+  };
+
   return (
     <>
       <div className=" flex items-center">
@@ -49,7 +71,16 @@ const VideoCarousel = () => {
           <div key={list.id} id="slider" className="sm:pr-20 pr-10">
             <div className="video-carousel-container">
               <div className="w-full h-full flex-center rounded-3xl  overflow-hidden bg-black">
-                <video id="video" playsInline={true} preload="auto" muted>
+                <video
+                  id="video"
+                  playsInline={true}
+                  preload="auto"
+                  muted
+                  ref={(el) => (videoRef.current[i] = el)}
+                  onPlay={() => {
+                    setVideo((preVideo) => ({ ...preVideo, isPlaying: true }));
+                  }}
+                >
                   <source src={list.video} type="video/mp4" />
                 </video>
               </div>
@@ -63,6 +94,35 @@ const VideoCarousel = () => {
             </div>
           </div>
         ))}
+      </div>
+      <div className="relative flex-center mt-10">
+        <div className=" flex-center py-5 px-7 bg-gray-300 backdrop-blur rounded-full">
+          {videoRef.current.map((_, i) => (
+            <span
+              key={i}
+              ref={(el) => (videoDivRef.current[i] = el)}
+              className="mx-2 w-3 h-3 bg-gray-200 rounded-full relative cursor-pointer"
+            >
+              <span
+                className="absolute h-full w-full rounded-full"
+                ref={(el) => (videoSpanRef.current[i] = el)}
+              />
+            </span>
+          ))}
+        </div>
+        <button className=" control-btn">
+          <img
+            src={isLastVideo ? replayImg : !isPlaying ? playImg : pauseImg}
+            alt={isLastVideo ? "replay" : !isPlaying ? "play" : "pause"}
+            onClick={
+              isLastVideo
+                ? () => handleProcess("video-reset")
+                : !isPlaying
+                ? () => handleProcess("play")
+                : () => handleProcess("pause")
+            }
+          />
+        </button>
       </div>
     </>
   );
