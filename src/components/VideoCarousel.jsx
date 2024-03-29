@@ -138,6 +138,11 @@ const VideoCarousel = () => {
                   preload="auto"
                   muted
                   ref={(el) => (videoRef.current[i] = el)}
+                  onEnded={() =>
+                    i !== 3
+                      ? handleProcess("video-end")
+                      : handleProcess("video-last")
+                  }
                   onPlay={() => {
                     setVideo((preVideo) => ({ ...preVideo, isPlaying: true }));
                   }}
