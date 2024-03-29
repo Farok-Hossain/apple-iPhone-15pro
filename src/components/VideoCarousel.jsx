@@ -3,7 +3,9 @@ import { hightlightsSlides } from "../constants";
 import { useState } from "react";
 import { useEffect } from "react";
 import { pauseImg, playImg, replayImg } from "../utils";
-import gasp from "gsap";
+import gsap from "gsap";
+
+import { useGSAP } from "@gsap/react";
 
 const VideoCarousel = () => {
   const videoRef = useRef([]);
@@ -22,6 +24,22 @@ const VideoCarousel = () => {
 
   const { isEnd, startPlay, videoId, isLastVideo, isPlaying } = video;
 
+  useGSAP(() => {
+    gsap.to("#video", {
+      scrollTrigger: {
+        trigger: "#video",
+        toggleActions: "restart none none none",
+      },
+      onComplete: () => {
+        setVideo((pre) => ({
+          ...pre,
+          startPlay: true,
+          isPlaying: true,
+        }));
+      },
+    });
+  }, [isEnd, videoId]);
+
   useEffect(() => {
     if (loadedData.length > 3) {
       if (!isPlaying) {
@@ -31,6 +49,8 @@ const VideoCarousel = () => {
       }
     }
   }, [startPlay, videoId, isPlaying, loadedData]);
+
+  const handleLoadedMetaData = (i, e) => setLoadedData((pre) => [...pre, e]);
 
   useEffect(() => {
     const currentProgress = 0;
@@ -80,6 +100,7 @@ const VideoCarousel = () => {
                   onPlay={() => {
                     setVideo((preVideo) => ({ ...preVideo, isPlaying: true }));
                   }}
+                  onLoadedMetadata={(e) => handleLoadedMetaData(i, e)}
                 >
                   <source src={list.video} type="video/mp4" />
                 </video>
