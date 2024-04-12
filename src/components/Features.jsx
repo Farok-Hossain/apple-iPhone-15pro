@@ -95,7 +95,7 @@ const Features = () => {
                     Titanium has one of the best strength-to-weight ratios of
                     any metal, making these our{" "}
                     <span className="text-white">
-                      lightest Pro models ever.
+                      lightest Pro models ever you know.
                     </span>
                     , You'll notice the difference the moment you pick one up.
                   </p>
